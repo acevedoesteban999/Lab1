@@ -1,0 +1,304 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ClassLibrary
+{
+
+    struct Coordinate
+    {
+        public Coordinate(int x,int y,int z)
+        {
+            this.x=x;
+            this.y=y;
+            this.z=z;
+        }
+        public int x ;
+        public int y ;
+        public int z ;
+        public  static Coordinate operator +(Coordinate coord1, Coordinate coord2)
+        {
+            return new Coordinate(coord1.x + coord2.x, coord1.y + coord2.y, coord1.z + coord2.z);
+        }
+        public void Add(int x, int y, int z)
+        {
+            this.x += x;
+            this.y += y;
+            this.z += z;
+        }
+      }
+ 
+    abstract class Form
+    {
+        private static int _cont;
+        protected string _name;
+        protected int ID { get; set; }
+        protected Coordinate _coordinate;
+        public Coordinate COORDINATE { get { return this._coordinate; } set { this._coordinate = (value); } }
+        public string NAME { get { return this._name; } }
+        protected int _wigth;
+        protected int _height;
+        public Form(string name,Coordinate crd=new Coordinate(),int wigth=0,int height=0)
+        {
+            this._name = name;
+            this._coordinate = crd;
+            this._wigth = wigth;
+            this._height = height;
+            this.ID = _cont++;
+        }
+        ~Form()
+        {
+            _cont--;
+        }
+        
+        public virtual void Add(Form form){}
+        public virtual void Add(string ElementName,Form form) { }
+        public  virtual void Draw()
+        {
+            Console.WriteLine("ID:"+ID+"->"+_name +"->("+ _coordinate.x.ToString() + ";" + _coordinate.y.ToString() + ";" + _coordinate.z.ToString()+")");
+        }
+        /// <summary>
+        /// Poner  una  nueva coordenada y sumarle los valores de entrada X,Y,Z
+        /// </summary>
+        /// <param name="crd"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        public virtual void Set_Coordinate(Coordinate crd,int  X=0,int Y=0,int Z=0)
+        {
+            crd.Add(X,Y,Z);
+            this._coordinate = crd;
+        }
+        public abstract void OnClick();
+        public virtual bool Pressed(int x, int y)
+        {
+            return (_coordinate.x <= x && _coordinate.x + _wigth >= x && _coordinate.y <= y && _coordinate.y + _wigth >= y);
+        }
+    }
+
+
+    class Button:Form
+    {
+        public Button(string name, Coordinate crd=new Coordinate(),int wigth=0,int height=0)
+            : base(name,crd,wigth,height)
+        { 
+        }
+        public override void OnClick()
+        {
+
+        }
+        
+    }
+
+    abstract class SelectionForm : Form 
+    {
+        private bool Check{get;set;}
+
+        public SelectionForm(string name, Coordinate crd = new Coordinate(), int wigth = 0, int height = 0)
+            : base(name,crd,wigth,height)
+        { 
+        }
+        public abstract override void OnClick();
+         public override void Draw()
+        {
+ 	        base.Draw();
+            Console.WriteLine("Check"+Check.ToString());
+            
+        }
+    }
+    class RadioButton:SelectionForm
+    {
+       
+        public RadioButton(string name, Coordinate crd = new Coordinate())
+            : base(name,crd,15,15)
+        { 
+        }
+        public override void OnClick()
+        {
+
+        }
+    }
+    class ChectBox : SelectionForm
+    {
+        public ChectBox(string name, Coordinate crd = new Coordinate())
+            : base(name, crd,15,15)
+        {
+        }
+        public override void OnClick()
+        {
+
+        }
+    }
+    
+    class RadioButtonGroup:Form
+    {
+        private List<RadioButton> radioButtons;
+
+        public RadioButtonGroup(string name, Coordinate crd = new Coordinate())
+            : base(name,crd)
+        {
+            radioButtons=new List<RadioButton>();
+        }
+        public override void Draw()
+        {
+            base.Draw();
+            int cont = 0;
+            Console.WriteLine("Elements:" + radioButtons.Count);
+            foreach (RadioButton RB in radioButtons)
+            {
+                Console.WriteLine("[RadioButton" + (cont++) + "]");
+                RB.Draw();
+            }
+        }
+        public override void OnClick()
+        {
+
+        }
+        public override void Add(Form form)
+        {
+            form.Set_Coordinate(radioButtons.Count!=0?radioButtons.Last().COORDINATE:this._coordinate, 0, 5);
+           radioButtons.Add((RadioButton)form);
+        }
+        public override bool Pressed(int x, int y)
+        {
+            foreach (RadioButton rb in radioButtons)
+                if (rb.Pressed(x,y))
+                    return true;
+            return false;
+        }
+    }
+    class Label:Form
+    {
+        private string TEXT{set;get;}
+         public Label(string name,string text="NullText", Coordinate crd = new Coordinate())
+            : base(name,crd,0,15)
+        { 
+             this.TEXT=text;
+             this._wigth = text.Count() * 10;
+        }
+         public override void OnClick()
+         {
+
+         }
+         public override void Draw()
+         {
+             base.Draw();
+             Console.WriteLine("Text:" + TEXT);
+         }
+    }
+
+    abstract class Container:Form
+    {
+        protected List<Form> forms;
+        public Container(string name, Coordinate crd = new Coordinate())
+            : base(name,crd)
+        { 
+            forms= new List<Form>();
+        }
+        public override void Add(Form form)
+        {
+            forms.Add(form);
+        }
+        public override void Add(string ElementName, Form form)
+        {
+            foreach (Form _form in forms)
+            {
+                if (string.Equals(ElementName, _form.NAME))
+                {
+                    _form.Add(form);
+                    return;
+                }
+            }
+        }
+        public override bool Pressed(int x, int y)
+        {
+            foreach (Form form in forms)
+                if (form.Pressed(x, y))
+                    return true;
+            return false;
+        }
+        public abstract override void OnClick();
+        public override void Draw()
+        {
+            base.Draw();
+            int cont = 0;
+            Console.WriteLine("Elements:"+forms.Count);
+            foreach (Form form in forms)
+            {
+                Console.WriteLine("(Element" + (cont++)+")");
+                form.Draw();
+            }
+        }
+    }
+    class Box : Container
+    {
+        public Box(string name, Coordinate crd=new Coordinate())
+            : base(name,crd)
+        { 
+        }
+        public override void Add(Form form)
+        {
+            form.Set_Coordinate((forms.Count!=0?forms.Last().COORDINATE:this.COORDINATE), 0, 5);
+            forms.Add(form);
+        }
+        public override void OnClick()
+        {
+        }
+    }
+    class FreeBox : Container
+    {
+        public FreeBox(string name, Coordinate crd = new Coordinate())
+           : base(name,crd)
+        { 
+        }
+        public override void OnClick()
+        {
+        }
+    }
+    class StackForm
+    {
+        private List<Form> forms;
+        public StackForm()
+        {
+            forms = new List<Form>();
+        }
+        
+        public void Log_Pressed(int x, int y)
+        {
+            foreach (Form f in forms)
+            {
+                if (f.Pressed(x,y))
+                {
+                    Console.WriteLine("Form Presioando:");
+                    f.Draw();
+                    return;
+                }
+            }
+            Console.WriteLine("No Form Presionado");
+        }
+        public int Get_Count()
+        {
+            return forms.Count;
+        }
+        public void Add(Form form)
+        {
+            forms.Add(form);
+        }
+        public void Sub(string name)
+        {
+            foreach (Form f in forms)
+                if (f.NAME.Equals(name))
+                {
+                    forms.Remove(f);
+                    return;
+                }
+        }
+        public void Draw()
+        {
+            foreach (Form f in forms)
+                f.Draw();
+        }
+    }
+}
