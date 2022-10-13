@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 
 namespace ClassLibrary
 {
 
-    struct Coordinate
+    public struct Coordinate
     {
         public Coordinate(int x,int y,int z)
         {
@@ -29,15 +29,13 @@ namespace ClassLibrary
             this.z += z;
         }
       }
- 
-    abstract class Form
+
+    public abstract class  Form
     {
         private static int _cont;
-        protected string _name;
+        public string _name;
         protected int ID { get; set; }
-        protected Coordinate _coordinate;
-        public Coordinate COORDINATE { get { return this._coordinate; } set { this._coordinate = (value); } }
-        public string NAME { get { return this._name; } }
+        public Coordinate _coordinate; 
         protected int _wigth;
         protected int _height;
         public Form(string name,Coordinate crd=new Coordinate(),int wigth=0,int height=0)
@@ -79,7 +77,7 @@ namespace ClassLibrary
     }
 
 
-    class Button:Form
+    public class  Button:Form
     {
         public Button(string name, Coordinate crd=new Coordinate(),int wigth=0,int height=0)
             : base(name,crd,wigth,height)
@@ -92,7 +90,7 @@ namespace ClassLibrary
         
     }
 
-    abstract class SelectionForm : Form 
+    abstract public class  SelectionForm : Form 
     {
         private bool Check{get;set;}
 
@@ -108,7 +106,7 @@ namespace ClassLibrary
             
         }
     }
-    class RadioButton:SelectionForm
+    public class  RadioButton:SelectionForm
     {
        
         public RadioButton(string name, Coordinate crd = new Coordinate())
@@ -120,7 +118,7 @@ namespace ClassLibrary
 
         }
     }
-    class ChectBox : SelectionForm
+    public class  ChectBox : SelectionForm
     {
         public ChectBox(string name, Coordinate crd = new Coordinate())
             : base(name, crd,15,15)
@@ -132,7 +130,7 @@ namespace ClassLibrary
         }
     }
     
-    class RadioButtonGroup:Form
+    public class  RadioButtonGroup:Form
     {
         private List<RadioButton> radioButtons;
 
@@ -158,7 +156,7 @@ namespace ClassLibrary
         }
         public override void Add(Form form)
         {
-            form.Set_Coordinate(radioButtons.Count!=0?radioButtons.Last().COORDINATE:this._coordinate, 0, 5);
+            form.Set_Coordinate(radioButtons.Count!=0?radioButtons.Last()._coordinate:this._coordinate, 0, 5);
            radioButtons.Add((RadioButton)form);
         }
         public override bool Pressed(int x, int y)
@@ -169,7 +167,7 @@ namespace ClassLibrary
             return false;
         }
     }
-    class Label:Form
+    public class  Label:Form
     {
         private string TEXT{set;get;}
          public Label(string name,string text="NullText", Coordinate crd = new Coordinate())
@@ -189,7 +187,7 @@ namespace ClassLibrary
          }
     }
 
-    abstract class Container:Form
+    abstract public class  Container:Form
     {
         protected List<Form> forms;
         public Container(string name, Coordinate crd = new Coordinate())
@@ -205,7 +203,7 @@ namespace ClassLibrary
         {
             foreach (Form _form in forms)
             {
-                if (string.Equals(ElementName, _form.NAME))
+                if (string.Equals(ElementName, _form._name))
                 {
                     _form.Add(form);
                     return;
@@ -232,7 +230,7 @@ namespace ClassLibrary
             }
         }
     }
-    class Box : Container
+    public class  Box : Container
     {
         public Box(string name, Coordinate crd=new Coordinate())
             : base(name,crd)
@@ -240,14 +238,14 @@ namespace ClassLibrary
         }
         public override void Add(Form form)
         {
-            form.Set_Coordinate((forms.Count!=0?forms.Last().COORDINATE:this.COORDINATE), 0, 5);
+            form.Set_Coordinate((forms.Count!=0?forms.Last()._coordinate:this._coordinate), 0, 5);
             forms.Add(form);
         }
         public override void OnClick()
         {
         }
     }
-    class FreeBox : Container
+    public class  FreeBox : Container
     {
         public FreeBox(string name, Coordinate crd = new Coordinate())
            : base(name,crd)
@@ -257,7 +255,7 @@ namespace ClassLibrary
         {
         }
     }
-    class StackForm
+    public class  StackForm
     {
         private List<Form> forms;
         public StackForm()
@@ -289,7 +287,7 @@ namespace ClassLibrary
         public void Sub(string name)
         {
             foreach (Form f in forms)
-                if (f.NAME.Equals(name))
+                if (f._name.Equals(name))
                 {
                     forms.Remove(f);
                     return;

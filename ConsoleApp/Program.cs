@@ -9,7 +9,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static void InterfazConsola(StackForm stackform)
+        public static void InterfazConsola(StackForm stackform)
         {
             string dataX,dataY;
             while (true)
@@ -20,13 +20,17 @@ namespace ConsoleApp
                 Console.WriteLine("\n\nVerificar una Coordenada:");
                 Console.WriteLine("Escribir \"Exit\" para salir");
                 Console.WriteLine("Coordenada X:");
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 dataX = Console.ReadLine();
-                if (dataX.Equals("Exit"))
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                if (dataX!=null && dataX.Equals("Exit"))
                     return;
                 
                 Console.WriteLine("Coordenada Y:");
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 dataY = Console.ReadLine();
-                if(dataY.Equals("Exit"))
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                if (dataY!=null && dataY.Equals("Exit"))
                     return;
                 try
                 {
@@ -37,7 +41,7 @@ namespace ConsoleApp
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(dataX+","+dataY+ " --> Comando no reconocido,pulse Enter para continuar...");
+                    Console.WriteLine(dataX+","+dataY+ " --> Comando no reconocido,pulse Enter para continuar...ErrorMessage:"+e.Message);
                     Console.ReadLine();
                     continue;
                 }
