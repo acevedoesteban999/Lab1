@@ -7,18 +7,22 @@ using System.Threading.Tasks;
 namespace ClassLibrary
 {
 
+    public enum FormsType
+    {
+        BUTTON,RADIOBUTTON,CHECTBOX,RADIOBUTTONGROUP,BOX,FREEBOX,LABEL
+    }
     public struct Coordinate
     {
-        public Coordinate(int x,int y,int z)
+        public Coordinate(int x, int y, int z)
         {
-            this.x=x;
-            this.y=y;
-            this.z=z;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
-        public int x ;
-        public int y ;
-        public int z ;
-        public  static Coordinate operator +(Coordinate coord1, Coordinate coord2)
+        public int x;
+        public int y;
+        public int z;
+        public static Coordinate operator +(Coordinate coord1, Coordinate coord2)
         {
             return new Coordinate(coord1.x + coord2.x, coord1.y + coord2.y, coord1.z + coord2.z);
         }
@@ -28,16 +32,18 @@ namespace ClassLibrary
             this.y += y;
             this.z += z;
         }
-      }
+    }
 
     public abstract class  Form
     {
+        
         private static int _cont;
         public string _name;
         protected int ID { get; set; }
         public Coordinate _coordinate; 
         protected int _wigth;
         protected int _height;
+        protected FormsType _formsType;
         public Form(string name,Coordinate crd=new Coordinate(),int wigth=0,int height=0)
         {
             this._name = name;
@@ -81,7 +87,8 @@ namespace ClassLibrary
     {
         public Button(string name, Coordinate crd=new Coordinate(),int wigth=0,int height=0)
             : base(name,crd,wigth,height)
-        { 
+        {
+            this._formsType = FormsType.BUTTON;
         }
         public override void OnClick()
         {
@@ -111,7 +118,8 @@ namespace ClassLibrary
        
         public RadioButton(string name, Coordinate crd = new Coordinate())
             : base(name,crd,15,15)
-        { 
+        {
+            this._formsType = FormsType.RADIOBUTTON;
         }
         public override void OnClick()
         {
@@ -123,6 +131,7 @@ namespace ClassLibrary
         public ChectBox(string name, Coordinate crd = new Coordinate())
             : base(name, crd,15,15)
         {
+            this._formsType = FormsType.CHECTBOX;
         }
         public override void OnClick()
         {
@@ -137,7 +146,8 @@ namespace ClassLibrary
         public RadioButtonGroup(string name, Coordinate crd = new Coordinate())
             : base(name,crd)
         {
-            radioButtons=new List<RadioButton>();
+            radioButtons = new List<RadioButton>();
+            this._formsType = FormsType.RADIOBUTTONGROUP;
         }
         public override void Draw()
         {
@@ -175,6 +185,7 @@ namespace ClassLibrary
         { 
              this.TEXT=text;
              this._wigth = text.Count() * 10;
+            this._formsType = FormsType.LABEL;
         }
          public override void OnClick()
          {
@@ -234,7 +245,8 @@ namespace ClassLibrary
     {
         public Box(string name, Coordinate crd=new Coordinate())
             : base(name,crd)
-        { 
+        {
+            this._formsType = FormsType.BOX;
         }
         public override void Add(Form form)
         {
@@ -249,7 +261,8 @@ namespace ClassLibrary
     {
         public FreeBox(string name, Coordinate crd = new Coordinate())
            : base(name,crd)
-        { 
+        {
+            this._formsType = FormsType.FREEBOX;
         }
         public override void OnClick()
         {
