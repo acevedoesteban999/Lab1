@@ -341,6 +341,16 @@ public abstract List<TResult> Get<TEntity, TResult>(Func<TEntity, TResult> selec
         void RollbackTransaction();
     }
 
+    public interface IFormRepository : IRepository
+    {
+        Form CreateForm(string name, FormsType formType, Coordinate coordinate);
+        void UpdateForm(Form Form);
+        void DeleteForm(Form Form);
+        Form FindForm(string name);
+        Form GetForm(int id);
+        List<Form> GetForms();
+    }
+
     public class RepositoryContext : DbContext
     {
         #region Tables

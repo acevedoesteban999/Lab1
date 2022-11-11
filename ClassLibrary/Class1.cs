@@ -13,7 +13,7 @@ namespace ClassLibrary
     }
     public struct Coordinate
     {
-        public Coordinate(int x, int y, int z)
+        public Coordinate(int x=0, int y=0, int z=0)
         {
             this.x = x;
             this.y = y;
@@ -39,11 +39,11 @@ namespace ClassLibrary
         
         private static int _cont;
         public string _name;
-        protected int ID { get; set; }
+        public int ID { get; set; }
         public Coordinate _coordinate; 
         protected int _wigth;
         protected int _height;
-        protected FormsType _formsType;
+        public FormsType _formsType;
         public Form(string name,Coordinate crd=new Coordinate(),int wigth=0,int height=0)
         {
             this._name = name;
